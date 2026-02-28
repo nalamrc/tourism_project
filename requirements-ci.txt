@@ -1,0 +1,8 @@
+huggingface_hub==0.24.6
+datasets==2.20.0
+pandas==2.2.2
+numpy==1.26.4
+scikit-learn==1.5.1
+joblib==1.4.2
+mlflow==2.15.1
+xgboost==2.1.1

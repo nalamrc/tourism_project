@@ -1,0 +1,8 @@
+artifact_location: file:///Users/rc/edu.world/pgp-aiml/module 10 - adv ML and MLOps/cornerstone
+  project/tourism_project/model_building/mlruns/511093544178496643
+creation_time: 1772250617481
+experiment_id: '511093544178496643'
+last_update_time: 1772250617481
+lifecycle_stage: active
+name: tourism_dev_experiments
+workspace: default

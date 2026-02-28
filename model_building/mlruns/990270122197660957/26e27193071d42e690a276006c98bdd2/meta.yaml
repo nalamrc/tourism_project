@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/rc/edu.world/pgp-aiml/module 10 - adv ML and MLOps/cornerstone
+  project/tourism_project/model_building/mlruns/990270122197660957/26e27193071d42e690a276006c98bdd2/artifacts
+end_time: 1772250819203
+entry_point_name: ''
+experiment_id: '990270122197660957'
+lifecycle_stage: active
+run_id: 26e27193071d42e690a276006c98bdd2
+run_name: prod_gradient_boosting
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1772250819198
+status: 3
+tags: []
+user_id: rc
