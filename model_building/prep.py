@@ -34,10 +34,8 @@ else:
     ])
     raw_path = next((p for p in raw_candidates if p.exists()), None)
     if raw_path is None:
-        searched = "
-".join(str(p) for p in raw_candidates)
-        raise FileNotFoundError(f"Raw dataset not found. Searched:
-{searched}")
+        searched = "\n".join(str(p) for p in raw_candidates)
+        raise FileNotFoundError(f"Raw dataset not found. Searched:\n{searched}")
     raw_df = pd.read_csv(raw_path)
 
 # Remove unnamed index-like column and customer id from modeling inputs.
