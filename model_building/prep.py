@@ -12,6 +12,7 @@ HF_DATASET_REPO = os.getenv("HF_DATASET_REPO", f"{HF_USERNAME}/tourism-wellness-
 HF_TOKEN = os.getenv("HF_TOKEN", "")
 TARGET_COL = "ProdTaken"
 BASE_DIR = Path(os.getenv("GITHUB_SRC_ART_BASE_DIR", Path(__file__).resolve().parents[1])).expanduser()
+RAW_DATA_PATH = os.getenv("RAW_DATA_PATH", "")
 
 api = HfApi(token=HF_TOKEN) if HF_TOKEN else None
 
@@ -21,8 +22,22 @@ data_dir.mkdir(parents=True, exist_ok=True)
 if HF_TOKEN and "nalamrc" not in HF_DATASET_REPO:
     raw_df = load_dataset(HF_DATASET_REPO, data_files="tourism.csv", split="train").to_pandas()
 else:
-    local_raw = BASE_DIR / "tourism.csv"
-    raw_path = local_raw if local_raw.exists() else Path("tourism.csv")
+    # Prefer explicit path from CI/local env, then common project locations.
+    raw_candidates = []
+    if RAW_DATA_PATH:
+        raw_candidates.append(Path(RAW_DATA_PATH))
+    raw_candidates.extend([
+        BASE_DIR / "data" / "tourism.csv",
+        BASE_DIR / "tourism.csv",
+        Path("data/tourism.csv"),
+        Path("tourism.csv"),
+    ])
+    raw_path = next((p for p in raw_candidates if p.exists()), None)
+    if raw_path is None:
+        searched = "
+".join(str(p) for p in raw_candidates)
+        raise FileNotFoundError(f"Raw dataset not found. Searched:
+{searched}")
     raw_df = pd.read_csv(raw_path)
 
 # Remove unnamed index-like column and customer id from modeling inputs.
