@@ -8,7 +8,7 @@ BASE_DIR = Path(os.getenv("GITHUB_SRC_ART_BASE_DIR", ".")).expanduser()
 DEPLOY_DIR = BASE_DIR / "deployment"
 
 api = HfApi(token=HF_TOKEN)
-api.create_repo(repo_id=HF_SPACE_REPO, repo_type="space", space_sdk="streamlit", private=False, exist_ok=True)
+api.create_repo(repo_id=HF_SPACE_REPO, repo_type="space", space_sdk="docker", private=False, exist_ok=True)
 
 for filename in ["Dockerfile", "app.py", "requirements.txt"]:
     api.upload_file(
