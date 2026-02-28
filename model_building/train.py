@@ -1,3 +1,4 @@
+
 import json
 import os
 from pathlib import Path
@@ -20,16 +21,21 @@ HF_USERNAME = os.getenv("HF_USERNAME", "nalamrc")
 HF_DATASET_REPO = os.getenv("HF_DATASET_REPO", f"{HF_USERNAME}/tourism-wellness-dataset")
 HF_MODEL_REPO = os.getenv("HF_MODEL_REPO", f"{HF_USERNAME}/tourism-wellness-model")
 HF_TOKEN = os.getenv("HF_TOKEN", "")
+BASE_DIR = Path(os.getenv("GITHUB_SRC_ART_BASE_DIR", ".")).expanduser()
 
-mlflow.set_tracking_uri(f"file:{Path('tourism_project/model_building/mlruns').resolve()}")
+MODEL_DIR = BASE_DIR / "model_building"
+DATA_DIR = BASE_DIR / "data"
+MODEL_DIR.mkdir(parents=True, exist_ok=True)
+
+mlflow.set_tracking_uri(f"file:{(MODEL_DIR / 'mlruns').resolve()}")
 mlflow.set_experiment("tourism_prod_experiments")
 
 if HF_TOKEN and "nalamrc" not in HF_DATASET_REPO:
     train_file = hf_hub_download(repo_id=HF_DATASET_REPO, filename="train.csv", repo_type="dataset")
     test_file = hf_hub_download(repo_id=HF_DATASET_REPO, filename="test.csv", repo_type="dataset")
 else:
-    train_file = "tourism_project/data/train.csv"
-    test_file = "tourism_project/data/test.csv"
+    train_file = DATA_DIR / "train.csv"
+    test_file = DATA_DIR / "test.csv"
 
 train_data = pd.read_csv(train_file)
 test_data = pd.read_csv(test_file)
@@ -103,9 +109,7 @@ for model_name, (model, param_grid) in candidate_models.items():
         best_model_name = model_name
         best_pipeline = estimator
 
-model_dir = Path("tourism_project/model_building")
-model_dir.mkdir(parents=True, exist_ok=True)
-model_path = model_dir / "best_model.joblib"
+model_path = MODEL_DIR / "best_model.joblib"
 joblib.dump(best_pipeline, model_path)
 
 metadata = {
@@ -114,18 +118,18 @@ metadata = {
     "target": TARGET_COL,
     "features": X_train.columns.tolist(),
 }
-(model_dir / "model_metadata.json").write_text(json.dumps(metadata, indent=2))
-(model_dir / "README.md").write_text(
-    "# Tourism Wellness Package Classifier\n\n"
-    "This model predicts whether a customer will purchase the wellness tourism package.\n"
-    f"Best production model: {best_model_name}.\n"
+(MODEL_DIR / "model_metadata.json").write_text(json.dumps(metadata, indent=2))
+(MODEL_DIR / "README.md").write_text(
+    "# Tourism Wellness Package Classifier" + chr(10) + chr(10)
+    + "This model predicts whether a customer will purchase the wellness tourism package." + chr(10)
+    + f"Best production model: {best_model_name}." + chr(10)
 )
 
 if HF_TOKEN and "nalamrc" not in HF_MODEL_REPO:
     api = HfApi(token=HF_TOKEN)
     api.create_repo(repo_id=HF_MODEL_REPO, repo_type="model", private=False, exist_ok=True)
     api.upload_file(path_or_fileobj=str(model_path), path_in_repo="best_model.joblib", repo_id=HF_MODEL_REPO, repo_type="model")
-    api.upload_file(path_or_fileobj=str(model_dir / "README.md"), path_in_repo="README.md", repo_id=HF_MODEL_REPO, repo_type="model")
-    api.upload_file(path_or_fileobj=str(model_dir / "model_metadata.json"), path_in_repo="model_metadata.json", repo_id=HF_MODEL_REPO, repo_type="model")
+    api.upload_file(path_or_fileobj=str(MODEL_DIR / "README.md"), path_in_repo="README.md", repo_id=HF_MODEL_REPO, repo_type="model")
+    api.upload_file(path_or_fileobj=str(MODEL_DIR / "model_metadata.json"), path_in_repo="model_metadata.json", repo_id=HF_MODEL_REPO, repo_type="model")
 
 pd.DataFrame([metadata])

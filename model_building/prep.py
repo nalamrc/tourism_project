@@ -1,3 +1,4 @@
+
 import os
 from pathlib import Path
 
@@ -10,16 +11,19 @@ HF_USERNAME = os.getenv("HF_USERNAME", "nalamrc")
 HF_DATASET_REPO = os.getenv("HF_DATASET_REPO", f"{HF_USERNAME}/tourism-wellness-dataset")
 HF_TOKEN = os.getenv("HF_TOKEN", "")
 TARGET_COL = "ProdTaken"
+BASE_DIR = Path(os.getenv("GITHUB_SRC_ART_BASE_DIR", ".")).expanduser()
 
 api = HfApi(token=HF_TOKEN) if HF_TOKEN else None
 
-data_dir = Path("tourism_project/data")
+data_dir = BASE_DIR / "data"
 data_dir.mkdir(parents=True, exist_ok=True)
 
 if HF_TOKEN and "nalamrc" not in HF_DATASET_REPO:
     raw_df = load_dataset(HF_DATASET_REPO, data_files="tourism.csv", split="train").to_pandas()
 else:
-    raw_df = pd.read_csv("tourism.csv")
+    local_raw = BASE_DIR / "tourism.csv"
+    raw_path = local_raw if local_raw.exists() else Path("tourism.csv")
+    raw_df = pd.read_csv(raw_path)
 
 # Remove unnamed index-like column and customer id from modeling inputs.
 unnamed_cols = [c for c in raw_df.columns if str(c).startswith("Unnamed") or str(c).strip() == ""]
