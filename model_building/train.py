@@ -21,7 +21,7 @@ HF_USERNAME = os.getenv("HF_USERNAME", "nalamrc")
 HF_DATASET_REPO = os.getenv("HF_DATASET_REPO", f"{HF_USERNAME}/tourism-wellness-dataset")
 HF_MODEL_REPO = os.getenv("HF_MODEL_REPO", f"{HF_USERNAME}/tourism-wellness-model")
 HF_TOKEN = os.getenv("HF_TOKEN", "")
-BASE_DIR = Path(os.getenv("GITHUB_SRC_ART_BASE_DIR", ".")).expanduser()
+BASE_DIR = Path(os.getenv("GITHUB_SRC_ART_BASE_DIR", Path(__file__).resolve().parents[1])).expanduser()
 
 MODEL_DIR = BASE_DIR / "model_building"
 DATA_DIR = BASE_DIR / "data"

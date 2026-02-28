@@ -11,7 +11,7 @@ HF_USERNAME = os.getenv("HF_USERNAME", "nalamrc")
 HF_DATASET_REPO = os.getenv("HF_DATASET_REPO", f"{HF_USERNAME}/tourism-wellness-dataset")
 HF_TOKEN = os.getenv("HF_TOKEN", "")
 TARGET_COL = "ProdTaken"
-BASE_DIR = Path(os.getenv("GITHUB_SRC_ART_BASE_DIR", ".")).expanduser()
+BASE_DIR = Path(os.getenv("GITHUB_SRC_ART_BASE_DIR", Path(__file__).resolve().parents[1])).expanduser()
 
 api = HfApi(token=HF_TOKEN) if HF_TOKEN else None
 

@@ -20,6 +20,7 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           HF_USERNAME: ${{ secrets.HF_USERNAME }}
+          GITHUB_SRC_ART_BASE_DIR: ${{ github.workspace }}
         run: python model_building/prep.py
 
   model-train:
@@ -35,7 +36,8 @@ jobs:
           HF_USERNAME: ${{ secrets.HF_USERNAME }}
           HF_MODEL_REPO: ${{ secrets.HF_MODEL_REPO }}
           HF_DATASET_REPO: ${{ secrets.HF_DATASET_REPO }}
-        run: python tourism_project/model_building/train.py
+          GITHUB_SRC_ART_BASE_DIR: ${{ github.workspace }}
+        run: python model_building/train.py
 
   deploy-space:
     needs: model-train
@@ -49,4 +51,5 @@ jobs:
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           HF_SPACE_REPO: ${{ secrets.HF_SPACE_REPO }}
-        run: python tourism_project/hosting/hosting.py
+          GITHUB_SRC_ART_BASE_DIR: ${{ github.workspace }}
+        run: python hosting/hosting.py
