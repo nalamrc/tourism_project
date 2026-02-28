@@ -15,12 +15,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install Dependencies
-        run: pip install -r tourism_project/requirements-ci.txt
+        run: pip install -r requirements-ci.txt
       - name: Prepare Data
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           HF_USERNAME: ${{ secrets.HF_USERNAME }}
-        run: python tourism_project/model_building/prep.py
+        run: python model_building/prep.py
 
   model-train:
     needs: data-prep
@@ -28,7 +28,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install Dependencies
-        run: pip install -r tourism_project/requirements-ci.txt
+        run: pip install -r requirements-ci.txt
       - name: Train and Register Model
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
