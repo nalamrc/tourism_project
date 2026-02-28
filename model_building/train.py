@@ -30,7 +30,7 @@ MODEL_DIR.mkdir(parents=True, exist_ok=True)
 mlflow.set_tracking_uri(f"file:{(MODEL_DIR / 'mlruns').resolve()}")
 mlflow.set_experiment("tourism_prod_experiments")
 
-if HF_TOKEN and "nalamrc" not in HF_DATASET_REPO:
+if HF_TOKEN and HF_DATASET_REPO and "<your_hf_username>" not in HF_DATASET_REPO:
     train_file = hf_hub_download(repo_id=HF_DATASET_REPO, filename="train.csv", repo_type="dataset")
     test_file = hf_hub_download(repo_id=HF_DATASET_REPO, filename="test.csv", repo_type="dataset")
 else:
@@ -125,7 +125,7 @@ metadata = {
     + f"Best production model: {best_model_name}." + chr(10)
 )
 
-if HF_TOKEN and "nalamrc" not in HF_MODEL_REPO:
+if HF_TOKEN and HF_MODEL_REPO and "<your_hf_username>" not in HF_MODEL_REPO:
     api = HfApi(token=HF_TOKEN)
     api.create_repo(repo_id=HF_MODEL_REPO, repo_type="model", private=False, exist_ok=True)
     api.upload_file(path_or_fileobj=str(model_path), path_in_repo="best_model.joblib", repo_id=HF_MODEL_REPO, repo_type="model")

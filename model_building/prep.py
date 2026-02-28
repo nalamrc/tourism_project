@@ -19,7 +19,7 @@ api = HfApi(token=HF_TOKEN) if HF_TOKEN else None
 data_dir = BASE_DIR / "data"
 data_dir.mkdir(parents=True, exist_ok=True)
 
-if HF_TOKEN and "nalamrc" not in HF_DATASET_REPO:
+if HF_TOKEN and HF_DATASET_REPO and "<your_hf_username>" not in HF_DATASET_REPO:
     raw_df = load_dataset(HF_DATASET_REPO, data_files="tourism.csv", split="train").to_pandas()
 else:
     # Prefer explicit path from CI/local env, then common project locations.
@@ -68,7 +68,7 @@ test_path = data_dir / "test.csv"
 train_df.to_csv(train_path, index=False)
 test_df.to_csv(test_path, index=False)
 
-if api and HF_TOKEN and "nalamrc" not in HF_DATASET_REPO:
+if api and HF_TOKEN and HF_DATASET_REPO and "<your_hf_username>" not in HF_DATASET_REPO:
     api.upload_file(path_or_fileobj=str(train_path), path_in_repo="train.csv", repo_id=HF_DATASET_REPO, repo_type="dataset")
     api.upload_file(path_or_fileobj=str(test_path), path_in_repo="test.csv", repo_id=HF_DATASET_REPO, repo_type="dataset")
 
