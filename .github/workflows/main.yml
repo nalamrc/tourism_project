@@ -1,0 +1,52 @@
+name: Tourism Project Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  data-prep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Dependencies
+        run: pip install -r tourism_project/requirements-ci.txt
+      - name: Prepare Data
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_USERNAME: ${{ secrets.HF_USERNAME }}
+        run: python tourism_project/model_building/prep.py
+
+  model-train:
+    needs: data-prep
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Dependencies
+        run: pip install -r tourism_project/requirements-ci.txt
+      - name: Train and Register Model
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_USERNAME: ${{ secrets.HF_USERNAME }}
+          HF_MODEL_REPO: ${{ secrets.HF_MODEL_REPO }}
+          HF_DATASET_REPO: ${{ secrets.HF_DATASET_REPO }}
+        run: python tourism_project/model_building/train.py
+
+  deploy-space:
+    needs: model-train
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Dependencies
+        run: pip install huggingface_hub
+      - name: Push Deployment Files
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_SPACE_REPO: ${{ secrets.HF_SPACE_REPO }}
+        run: python tourism_project/hosting/hosting.py
