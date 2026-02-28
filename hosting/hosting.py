@@ -4,7 +4,7 @@ from huggingface_hub import HfApi
 
 HF_TOKEN = os.getenv("HF_TOKEN", "")
 HF_SPACE_REPO = os.getenv("HF_SPACE_REPO", "nalamrc/tourism-wellness-app")
-BASE_DIR = Path(os.getenv("GITHUB_SRC_ART_BASE_DIR", ".")).expanduser()
+BASE_DIR = Path(os.getenv("GITHUB_SRC_ART_BASE_DIR", Path(__file__).resolve().parents[1])).expanduser()
 DEPLOY_DIR = BASE_DIR / "deployment"
 
 api = HfApi(token=HF_TOKEN)
